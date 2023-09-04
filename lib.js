@@ -160,8 +160,9 @@ if (require.main === module) {
             username: process.env.LOG_ES_USER || 'elastic',
             password: process.env.LOG_ES_PASS || 'changeme'
         },
-        index: process.env.LOG_ES_INDEX || 'pino-%{DATE}',
+        index: process.env.LOG_ES_INDEX || 'DJP-%{DATE}',
         flushBytes: process.env.LOG_ES_FLUSH_BYTES ? parseInt(process.env.LOG_ES_FLUSH_BYTES) : undefined,
-        rejectUnauthorized: process.env.LOG_ES_REJECT_UNAUTHORIZED === 'true' ? true : false
+        flushInterval: process.env.LOG_ES_FLUSH_INTERVAL ? parseInt(process.env.LOG_ES_FLUSH_INTERVAL) : undefined,
+        rejectUnauthorized: process.env.LOG_ES_REJECT_UNAUTHORIZED === 'true' ? true : false,
     })
 }
