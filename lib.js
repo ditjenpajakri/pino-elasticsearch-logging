@@ -30,6 +30,8 @@ function initializeBulkHandler (opts, client, splitter) {
         client.connectionPool.resurrect({ name: 'elasticsearch-js' })
       }
     }
+
+    console.log(client)
   
     const bulkInsert = client.helpers.bulk({
       datasource: splitter,
@@ -43,10 +45,9 @@ function initializeBulkHandler (opts, client, splitter) {
         }
   
         return {
-          index: {
+          create: {
             _index: getIndexName(date),
-            _type: type,
-            op_type: opType
+            // _type: type,
           }
         }
       },
@@ -66,7 +67,7 @@ function initializeBulkHandler (opts, client, splitter) {
       if (buildIndexName) {
         return buildIndexName(time)
       }
-      return index.replace('%{DATE}', time.substring(0, 10))
+      return index.replace('%{DATE}', time.substring ? time.substring(0, 10) : "")
     }
   }
   
@@ -93,11 +94,11 @@ function pinoElasticSearch(opts = {}) {
         if (typeof value !== 'object') {
             value = {
                 data: value,
-                time: setDateTimeString(value)
+                ['@timestamp']: setDateTimeString(value)
             }
         } else {
             if (value['@timestamp'] === undefined) {
-                value.time = setDateTimeString(value)
+                value['@timestamp'] = setDateTimeString(value)
             }
         }
         return value
@@ -107,7 +108,9 @@ function pinoElasticSearch(opts = {}) {
         node: opts.node,
         auth: opts.auth,
         // cloud: opts.cloud,
-        ssl: { rejectUnauthorized: opts.rejectUnauthorized, ...opts.tls }
+        tls: {
+            rejectUnauthorized: false
+          }
     }
 
     if (opts.caFingerprint) {
@@ -125,7 +128,7 @@ function pinoElasticSearch(opts = {}) {
     const client = new Client(clientOpts)
     console.log("Logging to elasticsearch...");
     console.log("Any line showing up here means that the line was not logged to elasticsearch.");
-    client.on('resurrect', () => {
+    client.diagnostic.on('resurrect', () => {
         initializeBulkHandler(opts, client, splitter)
     })
 
@@ -145,6 +148,7 @@ function start(opts) {
         console.error('Elasticsearch client error:', error)
     })
     stream.on('insertError', (error) => {
+        console.log(JSON.stringify(error))
         console.error('Elasticsearch server error:', error)
     })
 
