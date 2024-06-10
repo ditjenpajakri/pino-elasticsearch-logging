@@ -30,8 +30,6 @@ function initializeBulkHandler (opts, client, splitter) {
         client.connectionPool.resurrect({ name: 'elasticsearch-js' })
       }
     }
-
-    console.log(client)
   
     const bulkInsert = client.helpers.bulk({
       datasource: splitter,
