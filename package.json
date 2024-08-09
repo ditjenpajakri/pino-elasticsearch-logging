@@ -1,6 +1,6 @@
 {
   "name": "@ditjenpajakri/elasticsearch-logging",
-  "version": "2.0.1",
+  "version": "2.2.0",
   "description": "Elasticsearch ",
   "main": "lib.js",
   "bin": {
@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@elastic/elasticsearch": "8",
+    "dotenv": "^16.4.5",
     "pump": "^3.0.0",
     "split2": "^4.2.0"
   },
