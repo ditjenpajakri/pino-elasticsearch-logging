@@ -51,7 +51,7 @@ function initializeBulkHandler(opts, client, splitter) {
   const esVersion = Number(opts.esVersion || opts["es-version"]) || 7;
   const index = opts.index || "pino";
   const buildIndexName = typeof index === "function" ? index : null;
-//   const type = esVersion >= 7 ? undefined : opts.type || "log";
+  //   const type = esVersion >= 7 ? undefined : opts.type || "log";
   const opType = esVersion >= 7 ? opts.opType || opts.op_type : undefined;
 
   // Resurrect connection pool on destroy
@@ -210,28 +210,18 @@ if (require.main === module) {
 
   const additionalFields = Object.keys(process.env).filter((key) =>
     key.startsWith("LOG_ES_VAR_")
-  ).map(s => s.toLowerCase())
+  );
 
-  const additionalObject = additionalFields.reduce((obj, field) => {
-    const value = process.env[field.toLocaleUpperCase()];
-    function processKey(f, value) {
-      const parts = f ? f.split("_") : [];
-      if (parts.length) {
-        return processKey(parts.slice(0, parts.length - 1).join("_"), {
-          [parts[parts.length - 1]]: value,
-        });
-      } else {
-        if (f) return { [f]: value };
-        else return value;
-      }
-    }
-
-    return mergeDeep(obj, processKey(field, value));
-  }, {});
+  const additionalObject = {};
+  additionalFields.forEach((field) => {
+    const value = process.env[field];
+    const key = field.slice(11);
+    additionalObject[key] = value;
+  });
 
   start({
     node: process.env.LOG_ES_HOST || "http://localhost:9200",
-    additionalObject: additionalObject?.log?.es?.var ? additionalObject.log.es.var : {},
+    additionalObject,
     auth: {
       username: process.env.LOG_ES_USER || "elastic",
       password: process.env.LOG_ES_PASS || "changeme",
