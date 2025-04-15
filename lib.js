@@ -98,7 +98,13 @@ function initializeBulkHandler(opts, client, splitter) {
     return index.replace(
       "%{DATE}",
       time.substring ? time.substring(0, 10) : ""
-    );
+    )
+    .replace(
+      "%{MONTHLY}", 
+      time.substring ? time.substring(0, 7) : ""
+    )
+    .replace("%{YYYY}", time.substring ? time.substring(0, 4) : "")
+    .replace("%{MM}", time.substring ? time.substring(5, 7) : "")
   }
 }
 
