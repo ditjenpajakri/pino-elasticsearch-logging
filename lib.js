@@ -134,7 +134,7 @@ function pinoElasticSearch(opts = {}) {
           ["@timestamp"]: setDateTimeString(value),
         };
       } else {
-        value["message"] = value.msg || "-";
+        value["message"] = value.message || value.msg || "-";
 
         if (value.msg) delete value.msg;
 
